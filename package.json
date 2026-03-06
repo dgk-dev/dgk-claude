@@ -1,6 +1,6 @@
 {
   "name": "dgk-claude",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Claude Code skills, hooks & workflows — research-first development, AI code review, security hooks",
   "bin": {
     "dgk-claude": "./bin/dgk-claude.js"

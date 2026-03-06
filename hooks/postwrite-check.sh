@@ -24,7 +24,7 @@ esac
 check_dir="$(dirname "$file_path")"
 for _ in 1 2 3; do
   if [ -f "$check_dir/tsconfig.json" ]; then
-    echo "[PostWrite] TS 파일 수정됨: $(basename "$file_path") — 타입체크 권장: pnpm tsc --noEmit"
+    echo "[PostWrite] TS 파일 수정됨: $(basename "$file_path") — 타입체크 권장: npx tsc --noEmit"
     exit 0
   fi
   check_dir="$(dirname "$check_dir")"

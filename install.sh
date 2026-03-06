@@ -42,26 +42,6 @@ printf '\n'
 info "dgk-claude 설치 준비 중... (OS: $OS)"
 printf '\n'
 
-# 기존 스킬 확인
-EXISTING_SKILLS=()
-for skill_dir in "$SCRIPT_DIR"/skills/*/; do
-  [ -d "$skill_dir" ] || continue
-  skill_name="$(basename "$skill_dir")"
-  if [ -d "$SKILLS_DIR/$skill_name" ]; then
-    EXISTING_SKILLS+=("$skill_name")
-  fi
-done
-
-# 기존 hooks 확인
-EXISTING_HOOKS=()
-for hook_file in "$SCRIPT_DIR"/hooks/*.sh; do
-  [ -f "$hook_file" ] || continue
-  hook_name="$(basename "$hook_file")"
-  if [ -f "$HOOKS_DIR/$hook_name" ]; then
-    EXISTING_HOOKS+=("$hook_name")
-  fi
-done
-
 # 기존 settings.json hooks 개수
 EXISTING_HOOK_COUNT=0
 if [ -f "$SETTINGS" ] && jq -e '.hooks' "$SETTINGS" &>/dev/null; then

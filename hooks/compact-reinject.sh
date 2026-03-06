@@ -6,7 +6,9 @@ TEAM_DIR="$HOME/.claude/teams"
 
 # 활성 팀이 있는지 확인
 if [ -d "$TEAM_DIR" ] && [ "$(ls -A "$TEAM_DIR" 2>/dev/null)" ]; then
-    for TEAM_NAME in $(ls "$TEAM_DIR"); do
+    for TEAM_PATH in "$TEAM_DIR"/*/; do
+        [ -d "$TEAM_PATH" ] || continue
+        TEAM_NAME="$(basename "$TEAM_PATH")"
         echo "[COMPACT 복구] 활성 팀: $TEAM_NAME"
         echo "팀 config: $TEAM_DIR/$TEAM_NAME/config.json"
 
