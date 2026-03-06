@@ -134,13 +134,31 @@ register_hook "PostToolUse" "Write|Edit" "postwrite-check.sh"
 # Notification hooks
 register_hook "Notification" "" "telegram-notify.sh"
 
+# ── glm-review 설치 (/rr, /rrr 코드 리뷰) ───────────────────
+printf '\n'
+info "=== glm-review 설치 (코드 리뷰) ==="
+if command -v npm &>/dev/null; then
+  if command -v glm-review &>/dev/null; then
+    warn "glm-review: 이미 설치됨 — 스킵"
+  else
+    info "npm install -g glm-review 실행 중..."
+    if npm install -g glm-review 2>/dev/null; then
+      success "glm-review 설치 완료 — /rr, /rrr 사용 가능"
+    else
+      warn "glm-review 설치 실패 (권한 문제일 수 있음). 수동 설치: npm install -g glm-review"
+    fi
+  fi
+else
+  warn "npm 미설치 — glm-review 스킵. /rr, /rrr 사용하려면 Node.js 설치 후: npm install -g glm-review"
+fi
+
 # ── 완료 ─────────────────────────────────────────────────────
 printf '\n'
 success "설치 완료!"
 printf '\n'
 info "다음 단계:"
 info "  1. Claude Code 재시작"
-info "  2. /rr, /rrr 사용 시: npm install -g glm-review + ZAI_API_KEY 설정"
+info "  2. /rr, /rrr 사용 시: ZAI_API_KEY 설정 필요 — echo \"ZAI_API_KEY='키값'\" >> ~/.claude/.env.local"
 info "  3. Telegram 알림 사용 시: ~/.claude/.env.local에 TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID 추가"
 info "  4. /re, /ret 사용 시: MCP 서버 설정 (README 참조)"
 printf '\n'
