@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# dgk-claude 원라인 설치 스크립트
+# 사용법: curl -fsSL https://raw.githubusercontent.com/dgk-dev/dgk-claude/main/install-remote.sh | bash
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; NC='\033[0m'
+info()  { printf '%b[dgk-claude]%b %s\n' "$BLUE" "$NC" "$*"; }
+error() { printf '%b[dgk-claude]%b %s\n' "$RED" "$NC" "$*" >&2; }
+
+# 필수 도구 확인
+for cmd in git jq; do
+  if ! command -v "$cmd" &>/dev/null; then
+    error "$cmd가 필요합니다. 먼저 설치하세요."
+    case "$cmd" in
+      jq)  error "  Linux: sudo apt install jq | macOS: brew install jq | Windows: choco install jq" ;;
+      git) error "  https://git-scm.com/downloads" ;;
+    esac
+    exit 1
+  fi
+done
+
+TMP="$(mktemp -d 2>/dev/null || mktemp -d -t 'dgk-claude')"
+trap 'rm -rf "$TMP"' EXIT
+
+info "dgk-claude를 다운로드합니다..."
+git clone --depth 1 https://github.com/dgk-dev/dgk-claude.git "$TMP/dgk-claude" 2>/dev/null
+
+info "설치를 시작합니다..."
+bash "$TMP/dgk-claude/install.sh"
