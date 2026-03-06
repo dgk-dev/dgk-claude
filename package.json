@@ -1,0 +1,34 @@
+{
+  "name": "dgk-claude",
+  "version": "1.0.0",
+  "description": "Claude Code skills, hooks & workflows — research-first development, AI code review, security hooks",
+  "bin": {
+    "dgk-claude": "./bin/dgk-claude.mjs"
+  },
+  "type": "module",
+  "files": [
+    "bin/",
+    "skills/",
+    "hooks/",
+    "install.sh",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "claude-code",
+    "agent-skills",
+    "hooks",
+    "workflow",
+    "code-review",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dgk-dev/dgk-claude.git"
+  },
+  "author": "dgk-dev",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
