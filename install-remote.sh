@@ -9,11 +9,11 @@ info()  { printf '%b[dgk-claude]%b %s\n' "$BLUE" "$NC" "$*"; }
 error() { printf '%b[dgk-claude]%b %s\n' "$RED" "$NC" "$*" >&2; }
 
 # 필수 도구 확인
-for cmd in git jq; do
+for cmd in git node; do
   if ! command -v "$cmd" &>/dev/null; then
     error "$cmd가 필요합니다. 먼저 설치하세요."
     case "$cmd" in
-      jq)  error "  Linux: sudo apt install jq | macOS: brew install jq | Windows: choco install jq" ;;
+      node) error "  Node.js 18+ 설치: https://nodejs.org/" ;;
       git) error "  https://git-scm.com/downloads" ;;
     esac
     exit 1
@@ -27,4 +27,4 @@ info "dgk-claude를 다운로드합니다..."
 git clone --depth 1 https://github.com/dgk-dev/dgk-claude.git "$TMP/dgk-claude" 2>/dev/null
 
 info "설치를 시작합니다..."
-bash "$TMP/dgk-claude/install.sh"
+bash "$TMP/dgk-claude/install.sh" "$@"

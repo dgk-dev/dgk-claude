@@ -2,13 +2,33 @@
 
 [Claude Code](https://claude.ai/code) skills & hooks — 리서치 기반 개발 워크플로우, AI 코드 리뷰, 보안 hooks.
 
-## 원라인 설치
+## 빠른 설치
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/dgk-dev/dgk-claude/main/install-remote.sh | bash
+npx dgk-claude
 ```
 
-스킬 5개 + hooks 9개가 설치되고, `settings.json`에 자동 등록됩니다. Claude Code 재시작하면 바로 사용 가능.
+기본 동작:
+- 스킬 5개 + hooks 9개를 `~/.claude`에 설치합니다.
+- 기존 `settings.json`은 유지한 채 `dgk-claude` hooks만 병합합니다.
+- 이미 있는 동일 스킬/훅은 최신 버전과 다를 때만 업데이트하고, 바꾸기 전 백업합니다.
+- hooks는 Node 기반으로 등록되어 `jq`나 패키지 전용 bash 의존이 없습니다.
+
+옵션:
+
+```bash
+npx dgk-claude --dry-run
+npx dgk-claude --check-ret
+npx dgk-claude --check-ret --install-system-deps
+npx dgk-claude --yes
+npx dgk-claude --skip-glm-review
+```
+
+환경 메모:
+- macOS, Linux, WSL, Windows에서 같은 설치기로 동작합니다.
+- 단, Claude Code 자체는 Anthropic 공식 문서 기준 Windows에서 Git Bash 환경을 전제로 합니다. 이건 `dgk-claude`가 아니라 Claude Code 런타임 요구사항입니다.
+- `handoff-load` hook은 `handoff.md`뿐 아니라 `STATE.md`도 자동으로 읽어 세션 복구에 활용합니다.
+- `/ret`를 쓰기 전에 `npx dgk-claude --check-ret`로 tmux, MCP, 로컬 준비 상태를 바로 점검할 수 있습니다.
 
 ---
 
@@ -66,6 +86,14 @@ curl -fsSL https://raw.githubusercontent.com/dgk-dev/dgk-claude/main/install-rem
 
 **요구사항**: Max 플랜 (opus[1m]) + Agent Teams + tmux + MCP 3개
 
+빠른 점검:
+
+```bash
+npx dgk-claude --check-ret
+```
+
+tmux가 없으면 OS별 설치 명령을 안내하고, `--install-system-deps`를 주면 지원되는 환경에서는 자동 설치를 시도합니다.
+
 ---
 
 ### `/rr` — Z.AI 코드 리뷰 (무료)
@@ -120,7 +148,7 @@ curl -fsSL https://raw.githubusercontent.com/dgk-dev/dgk-claude/main/install-rem
 
 ## Hooks
 
-### bash-guard.sh — 위험 명령 차단
+### bash-guard.js — 위험 명령 차단
 
 Claude가 실수로 위험한 명령을 실행하는 것을 차단합니다.
 
@@ -131,35 +159,35 @@ Claude가 실수로 위험한 명령을 실행하는 것을 차단합니다.
 
 차단 시 `~/.claude/logs/blocked.log`에 기록.
 
-### audit-log.sh — Bash 사용 로깅
+### audit-log.js — Bash 사용 로깅
 
 Claude가 실행하는 모든 Bash 명령을 `~/.claude/logs/`에 기록. 사후 감사용.
 
-### block-webfetch.sh — WebFetch 차단
+### block-webfetch.js — WebFetch 차단
 
 WebFetch 도구 사용을 차단하고 Jina MCP로 대체하도록 강제. WebFetch는 타임아웃 미구현으로 hang 위험이 있음.
 
-### handoff-load.sh — HANDOFF.md 자동 로드
+### handoff-load.js — HANDOFF/STATE 자동 로드
 
-세션 시작 시 `.claude/handoff.md`가 있으면 자동으로 컨텍스트에 주입. 세션 간 작업 인계에 사용.
+세션 시작 시 `handoff.md` 또는 `STATE.md`가 있으면 자동으로 컨텍스트에 주입. 세션 간 작업 인계와 context rot 완화에 사용.
 
-### add-date.sh — 날짜 주입
+### add-date.js — 날짜 주입
 
 현재 날짜를 모델에 주입. Claude가 현재 연도를 오해하는 것을 방지.
 
-### postwrite-check.sh — TypeScript 타입체크 권장
+### postwrite-check.js — TypeScript 타입체크 권장
 
 `.ts`/`.tsx` 파일을 Write/Edit한 후 타입체크 실행을 권장.
 
-### compact-reinject.sh — 팀 컨텍스트 재주입
+### compact-reinject.js — 팀 컨텍스트 재주입
 
 Agent Teams 사용 시 context compact가 발생하면 팀 이름, PHASE, decisions.md 경로를 재주입.
 
-### rtk-rewrite.sh — rtk 자동 리라이트
+### rtk-rewrite.js — rtk 자동 리라이트
 
 [rtk](https://github.com/dgk-dev/rtk) (토큰 절약 CLI)가 설치되어 있으면 `ls`, `git log` 등의 명령을 자동으로 rtk 래핑. **rtk가 없으면 아무 일도 안 함** (passthrough).
 
-### telegram-notify.sh — Telegram 알림
+### telegram-notify.js — Telegram 알림
 
 Claude Code가 idle/permission 상태가 되면 Telegram으로 알림. `~/.claude/.env.local`에 `TELEGRAM_BOT_TOKEN`과 `TELEGRAM_CHAT_ID`가 설정되어 있을 때만 작동.
 
@@ -170,7 +198,7 @@ Claude Code가 idle/permission 상태가 되면 Telegram으로 알림. `~/.claud
 ### 원라인 설치 (추천)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/dgk-dev/dgk-claude/main/install-remote.sh | bash
+npx dgk-claude
 ```
 
 ### git clone 설치
@@ -180,6 +208,14 @@ git clone https://github.com/dgk-dev/dgk-claude.git
 cd dgk-claude
 ./install.sh
 ```
+
+### curl 설치
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/dgk-dev/dgk-claude/main/install-remote.sh | bash
+```
+
+`curl` 경로도 내부적으로 Node 설치기를 호출합니다.
 
 ### 선택적 설치 (원하는 것만)
 
@@ -192,8 +228,8 @@ cp -r skills/re ~/.claude/skills/re
 cp -r skills/cp ~/.claude/skills/cp
 
 # hooks 선택
-cp hooks/bash-guard.sh ~/.claude/hooks/
-cp hooks/handoff-load.sh ~/.claude/hooks/
+cp hooks/bash-guard.js ~/.claude/hooks/
+cp hooks/handoff-load.js ~/.claude/hooks/
 ```
 
 선택적 설치 시 `~/.claude/settings.json`의 hooks 섹션에 수동 등록 필요.
@@ -238,14 +274,16 @@ JINA_API_KEY=your-key
 
 ## 요구사항 요약
 
-| 스킬 | Claude Code | Git | jq | MCP 3개 | Max 플랜 | tmux | glm-review | ZAI_API_KEY |
+| 기능 | Node 18+ | Claude Code | Git | MCP 3개 | Max 플랜 | tmux | glm-review | ZAI_API_KEY |
 |------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| `/cp` | O | O | | | | | | |
-| `/re` | O | O | | O | | | | |
-| `/ret` | O | O | | O | O | O | | |
-| `/rr` | O | O | | | | | O | O |
-| `/rrr` | O | O | | | | | O | O |
-| hooks | O | | O | | | | | |
+| 설치기 | O | | | | | | | |
+| `/cp` | | O | O | | | | | |
+| `/re` | | O | O | O | | | | |
+| `/ret` | | O | O | O | O | O | | |
+| `/ret` 프리플라이트 | | | | 점검 | 수동 확인 | 점검/설치 | | |
+| `/rr` | | O | O | | | | O | O |
+| `/rrr` | | O | O | | | | O | O |
+| hooks | | O | | | | | | |
 
 ---
 
